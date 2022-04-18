@@ -30,15 +30,21 @@ class Arrangement implements CustomShape {
         }
     }
 
-    public void scale_shape(float scale, PVector center) {
+    public void scale_shape(float x, float y, PVector center) {
         for (CustomShape shape : shapes) {
-            shape.scale_shape(scale, center);
+            shape.scale_shape(x, y, center);
         }
     }
 
     public void rotate_shape(float angle, PVector center) {
         for (CustomShape shape : shapes) {
             shape.rotate_shape(angle, center);
+        }
+    }
+
+    public void set_color(color new_color) {
+        for (CustomShape shape : shapes) {
+            shape.set_color(new_color);
         }
     }
 

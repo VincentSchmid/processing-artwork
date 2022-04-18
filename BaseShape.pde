@@ -9,11 +9,18 @@ class BaseShape implements CustomShape {
     private boolean close_shape = true;
     public color shape_color;
     public float shape_opacity;
-    
+    public boolean shape_filled = true;
+    public boolean line_drawing;
+    public int line_width;
+
     public BaseShape(BaseShape baseShape) {
         this.close_shape = baseShape.close_shape;
         this.shape_color = baseShape.shape_color;
         this.shape_opacity = baseShape.shape_opacity;
+        this.shape_filled = baseShape.shape_filled;
+        this.line_drawing = baseShape.line_drawing;
+        this.line_width = baseShape.line_width;
+
         this.points = new LinkedList<PVector>();
         for (PVector point : baseShape.points) {
             this.points.add(new PVector(point.x, point.y));
@@ -24,6 +31,9 @@ class BaseShape implements CustomShape {
         this.shape_color = shape_color;
         this.shape_opacity = opacity;
         this.close_shape = close_shape;
+        shape_filled = true;
+        line_drawing = !close_shape;
+        line_width = 1;
     }
     
     public void init() {
@@ -81,7 +91,7 @@ class BaseShape implements CustomShape {
     }
     
     public void draw_shape() {
-        draw_shape_param(CLOSE);
+        draw_shape_param(close_shape ? CLOSE : OPEN);
     }
     
     public void draw_dots() {
@@ -97,11 +107,10 @@ class BaseShape implements CustomShape {
         }
     }
     
-    public void scale_shape(float scale, PVector center) {
-        
+    public void scale_shape(float x, float y, PVector center) {
         for (PVector vector : points) {
-            vector.x = (vector.x - center.x) * scale + center.x;
-            vector.y = (vector.y - center.y) * scale + center.y;
+            vector.x = (vector.x - center.x) * x + center.x;
+            vector.y = (vector.y - center.y) * y + center.y;
         }
     }
 
@@ -112,13 +121,29 @@ class BaseShape implements CustomShape {
         }
     }
 
+    public void set_color(color new_color) {
+        shape_color = new_color;
+    }
+
     public CustomShape copy() {
         return new BaseShape(this);
     }
     
     protected void draw_shape_param(int param) {
-        fill(shape_color, map(shape_opacity, 0, 1, 0, 255));
-        noStroke();
+
+        if (shape_filled) {
+            fill(shape_color, map(shape_opacity, 0, 1, 0, 255));
+        } else {
+            noFill();
+        }
+
+        if (line_drawing) {
+            stroke(shape_color, map(shape_opacity, 0, 1, 0, 255));
+            strokeWeight(line_width);
+        } else {
+            noStroke();
+        }
+        
         beginShape();
         
         for (PVector vector : points) {

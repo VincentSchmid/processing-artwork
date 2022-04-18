@@ -13,33 +13,46 @@ void setup() {
     Helpers.context = this;
     Fuzzer.context = this;
     Arranger.context = this;
-    
+
     size(880, 660);
-    
-    BaseRect r = new BaseRect(width/2-100, height/2, 400, 300, a, 1);
-    BaseRect g = new BaseRect(width/2, height/2, 100, 300, d, 1);
-    BaseRect b = new BaseRect(width/2+100, height/2, 400, 300, c, 1);
-    BaseShape s = new BaseShape(e, 1 , true);
-    BaseLine l = new BaseLine(new PVector(0, 0), new PVector(width/2, height/2+100), e, 1.0, 10);
-    
-    shapes.add(r);
 
-    shapes.add(b);
-    shapes.add(g);
-    shapes.add(l);
+    colored_dotted_lines();
+}
 
-    //shapes.scale_shape(.2, new PVector(0, 0));
+void colored_dotted_lines() {
+    // 880x660
 
-    //Arrangement gridResult = Arranger.grid(shapes, 5, 5, 880.0, 660.0);
-    
-    //println(gridResult.shapes);
-    toDraw.add(shapes);
-    //toDraw.add(gridResult);
-    
-    println("done");
-    // shapes.addAll(Fuzzer.getFuzzyShape(r, .1, .4, -.1, PI / 10, .3, .7, 4, Fuzzer.FuzzType.RELATIVE));
-    // shapes.addAll(Fuzzer.getFuzzyShape(b, .1, .4, -.1, PI / 10, .3, .7, 4, Fuzzer.FuzzType.RELATIVE));
-    // shapes.addAll(Fuzzer.getFuzzyShape(g));
+    color[] colors = new color[] {a, b, c, d, e};
+
+    // COLOR BARS
+
+    BaseRect g = new BaseRect(width/2, height/2, 600, 900, d, 1);
+
+    shapes.add(Fuzzer.growShape(g, .1, .4, -.1, PI / 10, .3, .7, 3, Fuzzer.FuzzType.RELATIVE));
+    shapes.scale_shape(.1, .2, new PVector(50, 0));
+    Arrangement gridResult = Arranger.grid(shapes, 12, 1,width, height);
+    gridResult.translate(-80, 265);
+    gridResult.scale_shape(1.2, 5, new PVector(width/2, height/2));
+
+    for (int i = 0; i < gridResult.shapes.size(); ++i) {
+        ((Arrangement) gridResult.shapes.get(i)).set_color(colors[i % colors.length]);
+    }
+
+    toDraw.add(gridResult);
+
+    // HORIZONTAL LINES
+
+    BaseLine l = new BaseLine(new PVector(0, 0), new PVector(width, 0), bg, 1, 15);
+    BaseShape fuzzedLine = Fuzzer.growShape(l, .01, .3, PI/2, -PI / 2, .3, .7, 3, Fuzzer.FuzzType.RELATIVE);
+    Arrangement fuzzedArr = Fuzzer.getFuzzyShape(fuzzedLine, .01, .1, -.1, PI / 10, .4, .6, 2, Fuzzer.FuzzType.RELATIVE);
+    Arrangement fuzzedLineArr = Arranger.grid(fuzzedArr, 1, 30, width, height * 2);
+    fuzzedLineArr.translate(0, -height);
+
+    toDraw.add(fuzzedLineArr);
+
+    // DRAWING
+
+     single_draw();
 }
 
 void fuzzy_shape() {
@@ -51,14 +64,20 @@ void fuzzy_shape() {
   
   shapes.add(Fuzzer.getFuzzyShape(shapeA));
   shapes.add(Fuzzer.getFuzzyShape(shapeB));
+
+  toDraw.add(shapes);
+
+   single_draw();
 }
-        
-void draw() {
+
+void single_draw() {
     background(bg);
 
     for (CustomShape drawnShape : toDraw) {
         drawnShape.draw_shape();
     }
-    
+
     testShape.draw_dots();
+
+    save("test_output_" + random(1000000, 9999999) + ".png");
 }
