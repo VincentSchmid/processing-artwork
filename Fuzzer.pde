@@ -2,7 +2,7 @@ import java.util.function.Function;
 
 
 static class Fuzzer {
-  public static sketch_220417c context;
+  public static watercolor context;
   public static List<CustomShape> shapes = new ArrayList<CustomShape>();
     
   public static void growShape(BaseShape shape, 
