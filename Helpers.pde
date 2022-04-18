@@ -16,4 +16,16 @@ static class Helpers {
                  
     return context.new BaseLine(start_point, dest_point);
   }
+  
+  public static BaseShape polygon(BaseShape shape, float x, float y, float radius, int npoints) {
+    BaseShape new_shape = (BaseShape) shape.copy();
+    float angle = TWO_PI / npoints;
+    for (float a = 0; a < TWO_PI; a += angle) {
+        float sx = x + cos(a) * radius;
+        float sy = y + sin(a) * radius;
+        new_shape.add_point(sx, sy);
+    }
+
+    return new_shape;
+}
 }
