@@ -1,6 +1,12 @@
 static class Helpers {
-  public static watercolor context;
+  public static QuadStrip context;
   
+  public static PVector point_on_line(PVector p1, PVector p2, float t) {
+    p1 = p1.copy();
+    p2 = p2.copy();
+    return p1.add(p2.sub(p1).mult(t));
+  }
+
   public static BaseLine line_on_line(PVector pointA,
                                       PVector pointB,
                                       float interploate_amount,

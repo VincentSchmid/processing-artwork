@@ -4,14 +4,18 @@ import java.util.LinkedList;
 
 class BaseShape implements CustomShape {
     protected List<PVector> points = new LinkedList<PVector>();
-    private int current_index = 0;
-    private int last_index = 0;
-    private boolean close_shape = true;
+    protected int current_index = 0;
+
     public color shape_color;
     public float shape_opacity;
     public boolean shape_filled = true;
     public boolean line_drawing;
     public int line_width;
+
+    private boolean close_shape = true;
+    private int last_index = 0;
+    private float point_size = 10.0;
+    private int font_size = 12;
 
     public BaseShape(BaseShape baseShape) {
         this.close_shape = baseShape.close_shape;
@@ -55,6 +59,13 @@ class BaseShape implements CustomShape {
     public boolean has_next() {
         return current_index < points.size();
     }
+
+    public PVector prev(){
+        if (--current_index >= points.size()) {
+            return null;
+        }
+        return points.get(current_index++);
+    }
     
     public PVector next() {
         if (current_index >= points.size()) {
@@ -71,13 +82,24 @@ class BaseShape implements CustomShape {
     
     public void remove_current() {
         remove_at_index(current_index - 1);
-}
+    }
     
     public void remove_at_index(int index) {
         current_index--;
         last_index--;
         
         points.remove(index);
+    }
+
+    public void insert_point(PVector new_point) {
+        last_index++;
+        
+        if (points.isEmpty() && close_shape) {
+            println("Warning: closing shape");
+            points.add(new PVector(new_point.x, new_point.y));
+        }
+        
+        points.add(current_index - 1, new_point);
     }
     
     public void insert(int index, PVector new_point) {
@@ -94,9 +116,20 @@ class BaseShape implements CustomShape {
         draw_shape_param(close_shape ? CLOSE : OPEN);
     }
     
-    public void draw_dots() {
-        for (PVector vector : points) {
-            ellipse(vector.x, vector.y, 10, 10); 
+    public void draw_dots(boolean show_text) {
+        stroke(0);
+        
+        textSize(font_size);
+        for (int i = 0; i < points.size(); i++) {
+            println(points.get(i));
+            
+            if (show_text) {
+                fill(0);
+                text(i, points.get(i).x - point_size * 1.05, points.get(i).y + point_size * 1.05);
+                fill(255);
+                text(i, points.get(i).x - point_size * 1.1, points.get(i).y + point_size * 1.1);
+            }
+            ellipse(points.get(i).x, points.get(i).y, point_size, point_size); 
         }
     }
     
