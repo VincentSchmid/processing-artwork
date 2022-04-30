@@ -63,4 +63,14 @@ class Arrangement implements CustomShape {
             shape.print_debug_info();
         }
     }
+
+    public void map(Function<CustomShape, CustomShape> func) {
+        List<CustomShape> tmp = new ArrayList<>();
+
+        for (CustomShape shape : shapes) {
+            tmp.add(func.apply(shape));
+        }
+
+        shapes = tmp;
+    }
 }
